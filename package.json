@@ -2,7 +2,7 @@
   "name": "gs_ac_nh",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http://raywhui.github.io/gs_ac_nh",
+  "homepage": "https://raywhui.github.io/gs_ac_nh",
   "dependencies": {
     "@material-ui/core": "^4.9.11",
     "@material-ui/icons": "^4.9.1",
