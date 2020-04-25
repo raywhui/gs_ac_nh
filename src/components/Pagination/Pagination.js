@@ -6,6 +6,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     "& > *": {
       marginTop: theme.spacing(2),
+      marginBottom: theme.spacing(4),
     },
   },
 }));
@@ -16,11 +17,10 @@ export default function Paginationd(props) {
   return (
     <div className={classes.root}>
       <Pagination
-        style={{ margin: "0 auto" }}
+        size="large"
         count={props.length}
         onChange={(e, num) => {
           props.changePage(num - 1);
-          console.log(num);
         }}
         variant="outlined"
         boundaryCount={10}

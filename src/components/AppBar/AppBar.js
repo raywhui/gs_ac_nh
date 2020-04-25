@@ -8,13 +8,14 @@ import InputBase from "@material-ui/core/InputBase";
 import Badge from "@material-ui/core/Badge";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
-import MenuIcon from "@material-ui/icons/Menu";
 import SearchIcon from "@material-ui/icons/Search";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import MailIcon from "@material-ui/icons/Mail";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import Button from "@material-ui/core/Button";
+
+import { renderUserOwned, renderUserWishlist } from "./AppBar.utils";
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -84,9 +85,13 @@ export default function PrimarySearchAppBar(props) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+  const [disabled, setDisabled] = React.useState(false);
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+
+  const { db, currentUser, setNHFilter } = props.queryData;
+  const { paginateArray } = props;
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -116,8 +121,7 @@ export default function PrimarySearchAppBar(props) {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem onClick={() => props.logout()}>Sign Out</MenuItem>
     </Menu>
   );
 
@@ -166,7 +170,15 @@ export default function PrimarySearchAppBar(props) {
     <div className={classes.grow}>
       <AppBar position="static">
         <Toolbar>
-          <Typography className={classes.title} variant="h6" noWrap>
+          <Typography
+            className={(classes.title, "logo-name")}
+            variant="h6"
+            noWrap
+            onClick={() => {
+              // Reset Grid
+              setNHFilter(paginateArray[0]);
+            }}
+          >
             GOONSQUAD AC ITEM TRACKER
           </Typography>
           <div className={classes.search}>
@@ -174,7 +186,7 @@ export default function PrimarySearchAppBar(props) {
               <SearchIcon />
             </div>
             <InputBase
-              placeholder="Search…"
+              placeholder="Minimum 3 Characters..."
               classes={{
                 root: classes.inputRoot,
                 input: classes.inputInput,
@@ -185,9 +197,13 @@ export default function PrimarySearchAppBar(props) {
           </div>
           <Button
             variant="contained"
+            disabled={disabled}
             color="secondary"
-            onClick={() => {
-              props.submitSearch();
+            onClick={async () => {
+              await setDisabled(true);
+              props.submitSearch().then(() => {
+                setDisabled(false);
+              });
             }}
           >
             Search
@@ -195,16 +211,20 @@ export default function PrimarySearchAppBar(props) {
           <Button
             style={{ marginLeft: 10 }}
             color="secondary"
+            disabled={disabled}
             onClick={() => {
-              console.log("owned");
+              renderUserOwned(db, currentUser.id, setNHFilter, setDisabled);
+              setDisabled(true);
             }}
           >
             Owned
           </Button>
           <Button
             color="secondary"
+            disabled={disabled}
             onClick={() => {
-              console.log("wishlist");
+              renderUserWishlist(db, currentUser.id, setNHFilter, setDisabled);
+              setDisabled(true);
             }}
           >
             Wishlist
@@ -212,7 +232,7 @@ export default function PrimarySearchAppBar(props) {
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
             <IconButton aria-label="show 17 new notifications" color="inherit">
-              <Badge badgeContent={1} color="secondary">
+              <Badge badgeContent={0} color="secondary">
                 <NotificationsIcon />
               </Badge>
             </IconButton>

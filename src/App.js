@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import blue from "@material-ui/core/colors/blue";
+// import blue from "@material-ui/core/colors/blue";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import * as firebase from "firebase";
 import withFirebaseAuth from "react-with-firebase-auth";
@@ -17,7 +17,7 @@ import RHBruh from "./images/rhbruh.png";
 import Roald from "./images/roald-unapproved.png";
 
 /* Utils */
-import { getUserData, updateOwnedItem } from "./firebase.utils";
+import { getUserData } from "./firebase.utils";
 
 /*JSON data import*/
 import NHData from "./result.json";
@@ -44,32 +44,13 @@ const providers = {
   googleProvider: new firebase.auth.GoogleAuthProvider(),
 };
 
-// updateOwnedItem(firebase, db);
-
-// db.collection("data")
-//   .doc(`owned`)
-//   .get()
-//   .then((doc) => {
-//     let itemMetaData = doc.data();
-//     itemMetaData["whfklasjflskf"].forEach((refDoc) => {
-//       console.log(refDoc.firestore);
-//     });
-//   });
-
-// db.collection("user")
-//   .doc(`q17Quzp8e0TjH8xio8VZYSoOJpW2`)
-//   .get()
-//   .then((doc) => {
-//     console.log(doc);
-//     console.log(doc.data());
-//   });
-
 const theme = createMuiTheme({
   palette: {
     primary: {
       main: "#333",
     },
     secondary: {
+      // main: "#f48fb1",
       main: "#f48fb1",
     },
     type: "dark",
@@ -83,6 +64,7 @@ const mappedDataNames = Object.keys(NHData).map((key, i) => {
   };
 });
 
+// Splits data into pagination, # is how many values per array
 const paginateArray = chunk(mappedDataNames, 50);
 
 function App(props) {
@@ -91,9 +73,10 @@ function App(props) {
     isSignedIn: false,
     isApproved: false,
   });
-  // const [NHFilter, setNHFilter] = useState(mappedDataNames);
+  // const [currentUser, setNHFilter] = useState(mappedDataNames);
   const [page, setPage] = useState(0);
   const [NHFilter, setNHFilter] = useState(paginateArray[page]);
+  const [currentUser, setCurrentUser] = useState({});
 
   // Set props for auth
   const { user, signOut, signInWithGoogle } = props;
@@ -102,7 +85,7 @@ function App(props) {
 
   // search/filter logic
   const search = (params) => {
-    if (params !== "") {
+    if (params !== "" && params.length > 2) {
       // if search bar has value, filter entire list
       filteredData = mappedDataNames.filter((data) => {
         return data.name.includes(params.toLowerCase());
@@ -114,9 +97,10 @@ function App(props) {
   };
 
   // Submit filter logic
-  const submitSearch = () => {
+  const submitSearch = async () => {
     if (filteredData) {
-      setNHFilter(filteredData);
+      await setNHFilter(filteredData);
+      return;
     }
   };
 
@@ -126,8 +110,7 @@ function App(props) {
         isSignedIn: true,
         isApproved: "pending",
       });
-      getUserData(db, user, setIsSignAndApproved);
-      console.log(user);
+      getUserData(db, user, setIsSignAndApproved, setCurrentUser);
     }
   }, [user]);
 
@@ -137,20 +120,33 @@ function App(props) {
 
   return (
     <div className="App">
-      {/* {logged in and approved} */}
       {user &&
       isSignAndApproved.isApproved === true &&
       isSignAndApproved.isSignedIn ? (
         <ThemeProvider theme={theme}>
-          <AppBar inputChange={search} submitSearch={submitSearch} />
+          <AppBar
+            inputChange={search}
+            submitSearch={submitSearch}
+            paginateArray={paginateArray}
+            logout={signOut}
+            queryData={{
+              firebase,
+              db,
+              currentUser,
+              setNHFilter,
+            }}
+          />
           <CardGrid
             data={NHData}
             filtered={NHFilter}
-            firebase={firebase}
-            firestore={db}
+            queryData={{
+              firebase,
+              db,
+              currentUser,
+              setNHFilter,
+            }}
           />
           <Pagination length={paginateArray.length} changePage={setPage} />
-          <button onClick={signOut}>Sign out</button>
         </ThemeProvider>
       ) : user &&
         !isSignAndApproved.isApproved &&

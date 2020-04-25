@@ -9,7 +9,6 @@ const Login = (props) => {
       <img
         className="googleLoginButton"
         onClick={() => {
-          console.log("what");
           props.onClick();
         }}
         style={{ width: 200 }}

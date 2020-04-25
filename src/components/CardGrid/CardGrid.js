@@ -1,9 +1,13 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import ItemCard from "../ItemCard";
-import * as firebase from "firebase";
+
+import {
+  getOwnedItem,
+  getWishlistItem,
+  listenForUpdatedData,
+} from "../../firebase.utils";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -19,13 +23,33 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-// const db = firebase.firestore();
-
 function CardGrid(props) {
+  const { db } = props.queryData;
   const classes = useStyles();
   const NHData = props.data;
   const dataArr = Object.keys(NHData);
   const filteredData = props.filtered;
+
+  const [ownedData, setOwnedData] = useState("");
+  const [wishlistData, setWishlistData] = useState("");
+
+  useEffect(() => {
+    if (ownedData === "") {
+      getOwnedItem(db).then((data) => {
+        setOwnedData(data);
+      });
+      // Set up db listener
+      listenForUpdatedData(db, setOwnedData, setWishlistData);
+    }
+  }, [ownedData, db]);
+
+  useEffect(() => {
+    if (wishlistData === "") {
+      getWishlistItem(db).then((data) => {
+        setWishlistData(data);
+      });
+    }
+  }, [wishlistData, db]);
 
   return (
     <div className={classes.root}>
@@ -37,8 +61,9 @@ function CardGrid(props) {
                 <ItemCard
                   nhData={NHData[res.id]}
                   id={res.id}
-                  firebase={props.firebase}
-                  firestore={props.firestore}
+                  queryData={props.queryData}
+                  ownedData={ownedData}
+                  wishlistData={wishlistData}
                 />
               </Grid>
             );

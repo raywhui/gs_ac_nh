@@ -38,6 +38,15 @@ body {
   filter: brightness(0.9);
 }
 
+.MuiPagination-ul {
+  justify-content: center;
+}
+
+.logo-name:hover {
+  cursor: pointer;
+  filter: brightness(0.8);
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
