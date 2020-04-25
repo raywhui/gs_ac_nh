@@ -26,7 +26,7 @@ import NHData from "./result.json";
 // firebase init
 const firebaseApp = firebase.initializeApp({
   apiKey: "AIzaSyBK5awMoELM2K2hntYBXljv6N0Skp0Bfq4",
-  authDomain: "gs-ac-nh.firebaseapp.com",
+  authDomain: "raywhui.github.io/gs_ac_nh",
   databaseURL: "https://gs-ac-nh.firebaseio.com",
   projectId: "gs-ac-nh",
   storageBucket: "gs-ac-nh.appspot.com",
