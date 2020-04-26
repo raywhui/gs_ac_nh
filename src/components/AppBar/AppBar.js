@@ -181,33 +181,39 @@ export default function PrimarySearchAppBar(props) {
           >
             GOONSQUAD AC ITEM TRACKER
           </Typography>
-          <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon />
-            </div>
-            <InputBase
-              placeholder="Minimum 3 Characters..."
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput,
-              }}
-              inputProps={{ "aria-label": "search" }}
-              onChange={(e) => props.inputChange(e.target.value)}
-            />
-          </div>
-          <Button
-            variant="contained"
-            disabled={disabled}
-            color="secondary"
-            onClick={async () => {
-              await setDisabled(true);
-              props.submitSearch().then(() => {
-                setDisabled(false);
-              });
-            }}
+          <form
+            style={{ display: "flex" }}
+            onSubmit={(e) => e.preventDefault()}
           >
-            Search
-          </Button>
+            <div className={classes.search}>
+              <div className={classes.searchIcon}>
+                <SearchIcon />
+              </div>
+              <InputBase
+                placeholder="Minimum 3 Characters..."
+                classes={{
+                  root: classes.inputRoot,
+                  input: classes.inputInput,
+                }}
+                inputProps={{ "aria-label": "search" }}
+                onChange={(e) => props.inputChange(e.target.value)}
+              />
+            </div>
+            <Button
+              variant="contained"
+              disabled={disabled}
+              color="secondary"
+              type="submit"
+              onClick={async () => {
+                await setDisabled(true);
+                props.submitSearch().then(() => {
+                  setDisabled(false);
+                });
+              }}
+            >
+              Search
+            </Button>
+          </form>
           <Button
             style={{ marginLeft: 10 }}
             color="secondary"

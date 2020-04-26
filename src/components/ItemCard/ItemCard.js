@@ -1,10 +1,12 @@
 import React, { useState } from "react";
+import { orderBy } from "lodash";
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardActionArea from "@material-ui/core/CardActionArea";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
+import Divider from "@material-ui/core/Divider";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import {
@@ -13,7 +15,7 @@ import {
   updateWishlist,
   removeWishlist,
 } from "../../firebase.utils";
-import { renderUserOwned } from "./ItemCard.utils";
+import { renderUserOwned, renderUserWishlisted } from "./ItemCard.utils";
 
 const useStyles = makeStyles({
   root: {
@@ -35,7 +37,10 @@ export default function ItemCard(props) {
 
   const [disabled, setDisabled] = useState(false);
 
+  const ownsItem = orderBy(ownedData[id], ["name"], ["asc"]);
+  const wishlistedItem = orderBy(wishlistData[id], ["name"], ["asc"]);
   const classes = useStyles();
+
   return (
     <Card className={classes.root}>
       <CardActionArea>
@@ -60,9 +65,9 @@ export default function ItemCard(props) {
           )}
         </CardContent>
       </CardActionArea>
-      <CardActions>
-        {ownedData[id] ? (
-          ownedData[id].findIndex((e) => e.userId === currentUser.id) === -1 ? (
+      <CardActions style={{ justifyContent: "space-between" }}>
+        {ownsItem ? (
+          ownsItem.findIndex((e) => e.userId === currentUser.id) === -1 ? (
             <Button
               size="small"
               color="secondary"
@@ -154,18 +159,48 @@ export default function ItemCard(props) {
         )}
       </CardActions>
       <CardActions style={{ flexFlow: "wrap" }}>
-        {ownedData[id]
-          ? ownedData[id].map((data, i) => {
+        {ownsItem.length !== 0 ? "Owned:" : ""}
+        {ownsItem
+          ? ownsItem.map((data, i) => {
               return (
                 <Button
+                  className={`users-owned-button ${data.name}-owned-button`}
                   size="small"
                   variant="contained"
-                  color="secondary"
                   disabled={disabled}
                   key={i}
                   onClick={() => {
                     setDisabled(true);
                     renderUserOwned(db, data.userId, setNHFilter, setDisabled);
+                  }}
+                >
+                  {data.name}
+                </Button>
+              );
+            })
+          : ""}
+      </CardActions>
+      <Divider variant="middle" />
+      <CardActions style={{ flexFlow: "wrap" }}>
+        {wishlistedItem.length !== 0 ? "Wishlist:" : ""}
+        {wishlistedItem
+          ? wishlistedItem.map((data, i) => {
+              return (
+                <Button
+                  className={`users-wishlisted-button ${data.name}-wishlisted-button`}
+                  size="small"
+                  variant="outlined"
+                  disabled={disabled}
+                  key={i}
+                  onClick={() => {
+                    setDisabled(true);
+                    // console.log("click");
+                    renderUserWishlisted(
+                      db,
+                      data.userId,
+                      setNHFilter,
+                      setDisabled
+                    );
                   }}
                 >
                   {data.name}

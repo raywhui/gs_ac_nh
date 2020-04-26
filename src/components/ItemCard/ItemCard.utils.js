@@ -1,4 +1,4 @@
-import { getUserOwned } from "../../firebase.utils";
+import { getUserOwned, getUserWishlist } from "../../firebase.utils";
 
 const renderUserOwned = (
   firestore,
@@ -15,4 +15,19 @@ const renderUserOwned = (
     });
 };
 
-export { renderUserOwned };
+const renderUserWishlisted = (
+  firestore,
+  userId,
+  setFilterState,
+  setDisabledState
+) => {
+  getUserWishlist(firestore, userId, setFilterState)
+    .then((data) => {
+      data ? setFilterState(data) : setFilterState([]);
+    })
+    .then(() => {
+      setDisabledState(false);
+    });
+};
+
+export { renderUserOwned, renderUserWishlisted };

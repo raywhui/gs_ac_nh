@@ -1,5 +1,17 @@
+:root {
+  --fwance: #9a89f9;
+  --alvin: #82f962;
+  --ramen: #62f9ef;
+  --gainstam: #f1fa8b;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background-color: #212121;
+  font-family: "Roboto", sans-serif;
 }
 
 .App {
@@ -45,6 +57,62 @@ body {
 .logo-name:hover {
   cursor: pointer;
   filter: brightness(0.8);
+}
+
+.users-owned-button.MuiButton-contained,
+.users-wishlisted-button.MuiButton-outlined {
+  margin: 5px;
+}
+
+.fwance-owned-button {
+  background-color: var(--fwance) !important;
+}
+.alvin-owned-button {
+  background-color: var(--alvin) !important;
+}
+.gainstam-owned-button {
+  background-color: var(--gainstam) !important;
+}
+.ramen-owned-button {
+  background-color: var(--ramen) !important;
+}
+
+.fwance-wishlisted-button {
+  color: var(--fwance) !important;
+  border-color: var(--fwance) !important;
+}
+.alvin-wishlisted-button {
+  color: var(--alvin) !important;
+  border-color: var(--alvin) !important;
+}
+.gainstam-wishlisted-button {
+  color: var(--gainstam) !important;
+  border-color: var(--gainstam) !important;
+}
+.ramen-wishlisted-button {
+  color: var(--ramen) !important;
+  border-color: var(--ramen) !important;
+}
+
+.gainstam-owned-button,
+.alvin-owned-button,
+.fwance-owned-button,
+.ramen-owned-button {
+  transition: filter 0.25s;
+}
+
+.gainstam-owned-button:hover,
+.alvin-owned-button:hover,
+.fwance-owned-button:hover,
+.ramen-owned-button:hover {
+  filter: brightness(0.5);
+  transition: filter 0.25s;
+  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2),
+    0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+}
+
+.MuiCardActions-spacing > :not(:first-child) {
+  margin: 5px !important;
 }
 
 @keyframes App-logo-spin {

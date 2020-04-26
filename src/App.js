@@ -13,6 +13,9 @@ import AppBar from "./components/AppBar";
 import CardGrid from "./components/CardGrid";
 import Login from "./components/Login";
 import Pagination from "./components/Pagination";
+
+import Fab from "@material-ui/core/Fab";
+import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import RHBruh from "./images/rhbruh.png";
 import Roald from "./images/roald-unapproved.png";
 
@@ -50,8 +53,16 @@ const theme = createMuiTheme({
       main: "#333",
     },
     secondary: {
-      // main: "#f48fb1",
       main: "#f48fb1",
+    },
+    success: {
+      main: "#82F962",
+    },
+    info: {
+      main: "#9A89F9",
+    },
+    warning: {
+      main: "#62F9EF",
     },
     type: "dark",
   },
@@ -147,6 +158,14 @@ function App(props) {
             }}
           />
           <Pagination length={paginateArray.length} changePage={setPage} />
+          <Fab
+            color="secondary"
+            aria-label="scroll-to-top"
+            style={{ position: "fixed", bottom: "5%", left: "2%" }}
+            href="#body"
+          >
+            <KeyboardArrowUpIcon />
+          </Fab>
         </ThemeProvider>
       ) : user &&
         !isSignAndApproved.isApproved &&
