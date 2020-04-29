@@ -19,6 +19,7 @@ export default function Paginationd(props) {
       <Pagination
         size="large"
         count={props.length}
+        page={props.currentPage + 1}
         onChange={(e, num) => {
           props.changePage(num - 1);
         }}

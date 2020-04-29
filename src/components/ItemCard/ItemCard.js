@@ -194,7 +194,6 @@ export default function ItemCard(props) {
                   key={i}
                   onClick={() => {
                     setDisabled(true);
-                    // console.log("click");
                     renderUserWishlisted(
                       db,
                       data.userId,

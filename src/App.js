@@ -23,8 +23,16 @@ import Roald from "./images/roald-unapproved.png";
 import { getUserData } from "./firebase.utils";
 
 /*JSON data import*/
-import NHData from "./result.json";
+import NHDataFurniture from "./data/furniture.json";
+import NHDataFlooring from "./data/flooring.json";
+import NHDataWallpaper from "./data/wallpaper.json";
+
 // import NHData from "./testData.json";
+let what = {
+  furniture: NHDataFurniture,
+  flooring: NHDataFlooring,
+  wallpaper: NHDataWallpaper,
+};
 
 // firebase init
 const firebaseApp = firebase.initializeApp({
@@ -68,15 +76,23 @@ const theme = createMuiTheme({
   },
 });
 
-const mappedDataNames = Object.keys(NHData).map((key, i) => {
-  return {
-    id: NHData[key].id,
-    name: NHData[key].name.toLowerCase(),
-  };
-});
+const mappedDataNames = (data) => {
+  return Object.keys(data).map((key, i) => {
+    return {
+      id: data[key].id,
+      name: data[key].name.toLowerCase(),
+    };
+  });
+};
 
 // Splits data into pagination, # is how many values per array
-const paginateArray = chunk(mappedDataNames, 50);
+const setPaginationLength = (namesArray) => {
+  return chunk(namesArray, 50);
+};
+
+const paginateArray = (NHData) => {
+  return setPaginationLength(mappedDataNames(NHData));
+};
 
 function App(props) {
   // States
@@ -86,24 +102,30 @@ function App(props) {
   });
   // const [currentUser, setNHFilter] = useState(mappedDataNames);
   const [page, setPage] = useState(0);
-  const [NHFilter, setNHFilter] = useState(paginateArray[page]);
+  const [NHFilter, setNHFilter] = useState("");
   const [currentUser, setCurrentUser] = useState({});
+  const [NHData, setNHData] = useState(NHDataFurniture);
+  const [dataReference, setDataReference] = useState("furniture");
 
   // Set props for auth
   const { user, signOut, signInWithGoogle } = props;
 
   let filteredData;
 
+  //Initialize Pagination Data
+  paginateArray(NHData);
+
   // search/filter logic
   const search = (params) => {
     if (params !== "" && params.length > 2) {
       // if search bar has value, filter entire list
-      filteredData = mappedDataNames.filter((data) => {
+      filteredData = mappedDataNames(NHData).filter((data) => {
         return data.name.includes(params.toLowerCase());
       });
     } else {
       // if search bar has no value, default to 1st page of pagination
-      filteredData = paginateArray[page];
+      return;
+      // filteredData = paginateArray(NHData)[page];
     }
   };
 
@@ -116,6 +138,21 @@ function App(props) {
   };
 
   useEffect(() => {
+    // console.log("dataReference:", what[dataReference]);
+    setNHData(what[dataReference]);
+  }, [dataReference]);
+
+  useEffect(() => {
+    setNHFilter(paginateArray(NHData)[0]);
+    setPage(0);
+  }, [NHData]);
+
+  useEffect(() => {
+    // setPage(0)
+    // console.log("NHFilter:", NHFilter);
+  }, [NHFilter]);
+
+  useEffect(() => {
     if (user) {
       setIsSignAndApproved({
         isSignedIn: true,
@@ -126,7 +163,7 @@ function App(props) {
   }, [user]);
 
   useEffect(() => {
-    setNHFilter(paginateArray[page]);
+    setNHFilter(paginateArray(NHData)[page]);
   }, [page]);
 
   return (
@@ -136,7 +173,9 @@ function App(props) {
       isSignAndApproved.isSignedIn ? (
         <ThemeProvider theme={theme}>
           <AppBar
+            NHData={NHData}
             inputChange={search}
+            setPage={setPage}
             submitSearch={submitSearch}
             paginateArray={paginateArray}
             logout={signOut}
@@ -145,6 +184,7 @@ function App(props) {
               db,
               currentUser,
               setNHFilter,
+              setDataReference,
             }}
           />
           <CardGrid
@@ -157,7 +197,11 @@ function App(props) {
               setNHFilter,
             }}
           />
-          <Pagination length={paginateArray.length} changePage={setPage} />
+          <Pagination
+            length={paginateArray(NHData).length}
+            changePage={setPage}
+            currentPage={page}
+          />
           <Fab
             color="secondary"
             aria-label="scroll-to-top"

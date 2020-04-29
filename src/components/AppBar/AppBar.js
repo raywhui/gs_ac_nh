@@ -15,6 +15,7 @@ import NotificationsIcon from "@material-ui/icons/Notifications";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import Button from "@material-ui/core/Button";
 
+import CategoryMenu from "./CategoryMenu";
 import { renderUserOwned, renderUserWishlist } from "./AppBar.utils";
 
 const useStyles = makeStyles((theme) => ({
@@ -90,8 +91,14 @@ export default function PrimarySearchAppBar(props) {
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
-  const { db, currentUser, setNHFilter } = props.queryData;
-  const { paginateArray } = props;
+  const {
+    db,
+    currentUser,
+    setNHFilter,
+    setDataReference,
+    setNHData,
+  } = props.queryData;
+  const { setPage, paginateArray, NHData } = props;
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -176,7 +183,8 @@ export default function PrimarySearchAppBar(props) {
             noWrap
             onClick={() => {
               // Reset Grid
-              setNHFilter(paginateArray[0]);
+              setPage(0);
+              setNHFilter(paginateArray(NHData)[0]);
             }}
           >
             GOONSQUAD AC ITEM TRACKER
@@ -237,6 +245,10 @@ export default function PrimarySearchAppBar(props) {
           </Button>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
+            <CategoryMenu
+              setNHData={setNHData}
+              setDataReference={setDataReference}
+            />
             <IconButton aria-label="show 17 new notifications" color="inherit">
               <Badge badgeContent={0} color="secondary">
                 <NotificationsIcon />

@@ -51,22 +51,26 @@ function CardGrid(props) {
     }
   }, [wishlistData, db]);
 
+  // console.log("NHData:", NHData);
+  // console.log("dataArr:", dataArr);
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
         {dataArr && filteredData.length > 0 ? (
           filteredData.map((res, i) => {
-            return (
-              <Grid item xs={3} key={i}>
-                <ItemCard
-                  nhData={NHData[res.id]}
-                  id={res.id}
-                  queryData={props.queryData}
-                  ownedData={ownedData}
-                  wishlistData={wishlistData}
-                />
-              </Grid>
-            );
+            if (NHData[res.id]) {
+              return (
+                <Grid item xs={3} key={i}>
+                  <ItemCard
+                    nhData={NHData[res.id]}
+                    id={res.id}
+                    queryData={props.queryData}
+                    ownedData={ownedData}
+                    wishlistData={wishlistData}
+                  />
+                </Grid>
+              );
+            }
           })
         ) : (
           <p style={{ color: "white" }}>Ahh shit, there's nothing here :(</p>
