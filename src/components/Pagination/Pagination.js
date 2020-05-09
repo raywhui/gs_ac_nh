@@ -24,7 +24,7 @@ export default function Paginationd(props) {
           props.changePage(num - 1);
         }}
         variant="outlined"
-        boundaryCount={10}
+        boundaryCount={3}
         color="secondary"
       />
     </div>

@@ -28,10 +28,15 @@ import NHDataFlooring from "./data/flooring.json";
 import NHDataWallpaper from "./data/wallpaper.json";
 
 // import NHData from "./testData.json";
-let what = {
+let ACItemsData = {
   furniture: NHDataFurniture,
   flooring: NHDataFlooring,
   wallpaper: NHDataWallpaper,
+  viewAll: {
+    ...NHDataFurniture,
+    ...NHDataFlooring,
+    ...NHDataWallpaper,
+  },
 };
 
 // firebase init
@@ -85,9 +90,12 @@ const mappedDataNames = (data) => {
   });
 };
 
+// Sets amount of items renders on page
+let itemsPerPage = 50;
+
 // Splits data into pagination, # is how many values per array
 const setPaginationLength = (namesArray) => {
-  return chunk(namesArray, 50);
+  return chunk(namesArray, itemsPerPage);
 };
 
 const paginateArray = (NHData) => {
@@ -123,9 +131,7 @@ function App(props) {
         return data.name.includes(params.toLowerCase());
       });
     } else {
-      // if search bar has no value, default to 1st page of pagination
       return;
-      // filteredData = paginateArray(NHData)[page];
     }
   };
 
@@ -138,8 +144,12 @@ function App(props) {
   };
 
   useEffect(() => {
-    // console.log("dataReference:", what[dataReference]);
-    setNHData(what[dataReference]);
+    setNHData(ACItemsData[dataReference]);
+    if (dataReference === "viewAll") {
+      itemsPerPage = Object.keys(ACItemsData[dataReference]).length;
+    } else {
+      itemsPerPage = 50;
+    }
   }, [dataReference]);
 
   useEffect(() => {

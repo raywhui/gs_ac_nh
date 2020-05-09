@@ -51,12 +51,11 @@ function CardGrid(props) {
     }
   }, [wishlistData, db]);
 
-  // console.log("NHData:", NHData);
-  // console.log("dataArr:", dataArr);
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
         {dataArr && filteredData.length > 0 ? (
+          //Change to filter then map
           filteredData.map((res, i) => {
             if (NHData[res.id]) {
               return (

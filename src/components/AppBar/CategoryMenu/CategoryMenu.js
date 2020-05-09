@@ -19,8 +19,7 @@ export default function CategoryMenu(props) {
 
   const categoryFunction = (str) => {
     setCurrentCategory(str);
-    setDataReference(str);
-    // setNHData(nhDataReference[str]);
+    setDataReference(str.replace(/\s+/g, ""));
   };
 
   return (
@@ -62,6 +61,17 @@ export default function CategoryMenu(props) {
           }}
         >
           Wallpaper
+        </MenuItem>
+        <MenuItem
+          onClick={(e) => {
+            categoryFunction("viewAll");
+            handleClose();
+          }}
+        >
+          View All
+          <p style={{ fontSize: 12, margin: 0, marginLeft: 3 }}>
+            {`(This'll take a few seconds to load)`}
+          </p>
         </MenuItem>
       </Menu>
     </div>
